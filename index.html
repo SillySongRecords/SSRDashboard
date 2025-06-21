@@ -1,67 +1,268 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Music Submission</title>
+  <meta charset="UTF-8">
+  <title>Silly Song Records — Submit Your Release</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body { font-family: sans-serif; margin: 40px; }
-    input, button { margin-top: 10px; display: block; }
+    :root {
+      --primary-blue: #007BFF;
+      --light-blue: #e6f0ff;
+      --white: #ffffff;
+      --gray: #f4f6f8;
+      --border-gray: #ccc;
+    }
+
+    body {
+      background: var(--gray);
+      font-family: 'Segoe UI', sans-serif;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .form-container {
+      background: var(--white);
+      padding: 30px;
+      border-radius: 12px;
+      max-width: 650px;
+      width: 100%;
+      box-shadow: 0 0 15px rgba(0,0,0,0.05);
+    }
+
+    .branding {
+      text-align: center;
+      font-size: 26px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--primary-blue);
+    }
+
+    .subheader {
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 14px;
+      color: #555;
+    }
+
+    label {
+      font-weight: 600;
+      display: block;
+      margin-top: 15px;
+      margin-bottom: 5px;
+      color: #222;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--border-gray);
+      border-radius: 8px;
+      box-sizing: border-box;
+      font-size: 14px;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--primary-blue);
+      outline: none;
+      background-color: var(--light-blue);
+    }
+
+    input[type="file"] {
+      padding: 8px;
+    }
+
+    button {
+      background: var(--primary-blue);
+      color: var(--white);
+      border: none;
+      padding: 14px;
+      width: 100%;
+      border-radius: 10px;
+      font-size: 16px;
+      margin-top: 25px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #0056c7;
+    }
+
+    .guidelines {
+      font-size: 13px;
+      background: var(--light-blue);
+      padding: 10px;
+      margin-top: 8px;
+      border-left: 4px solid var(--primary-blue);
+      border-radius: 6px;
+      color: #333;
+    }
+
+    #status {
+      margin-top: 15px;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 25px;
+      font-size: 13px;
+      color: #777;
+    }
+
+    a {
+      color: var(--primary-blue);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
-  <h1>Submit Your Track</h1>
-  <input type="text" id="artist" placeholder="Artist Name" required>
-  <input type="email" id="email" placeholder="Email" required>
+
+<div class="form-container">
+  <div class="branding">Silly Song Records</div>
+  <div class="subheader">Submit your next release below</div>
+
+  <label for="artist">Artist Name</label>
+  <input type="text" id="artist" placeholder="Your artist name" required>
+
+  <label for="title">Release Title</label>
+  <input type="text" id="title" placeholder="Album or single title" required>
+
+  <label for="genre">Primary Genre</label>
+  <select id="genre">
+    <option>Hip-Hop/Rap</option>
+    <option>Pop</option>
+    <option>R&B/Soul</option>
+    <option>Electronic</option>
+    <option>Rock</option>
+    <option>Jazz</option>
+    <option>Country</option>
+    <option>Other</option>
+  </select>
+
+  <label for="email">Contact Email</label>
+  <input type="email" id="email" placeholder="you@example.com" required>
+
+  <label for="songFile">Upload Song (MP3/WAV)</label>
   <input type="file" id="songFile" accept="audio/*" required>
-  <input type="file" id="coverFile" accept="image/*" required>
-  <button onclick="submitForm()">Submit</button>
 
-  <p id="status"></p>
+  <label for="coverFile">Upload Cover Art (JPG or PNG only)</label>
+  <input type="file" id="coverFile" accept="image/jpeg,image/png" required>
 
-  <script>
-    async function submitForm() {
-      const artist = document.getElementById('artist').value;
-      const email = document.getElementById('email').value;
-      const song = document.getElementById('songFile').files[0];
-      const cover = document.getElementById('coverFile').files[0];
-      const status = document.getElementById('status');
+  <div class="guidelines">
+    <strong>Cover Art Guidelines:</strong><br>
+    • Exactly <strong>3000 x 3000 pixels</strong><br>
+    • Format: <strong>JPG or PNG</strong><br>
+    • Color mode: <strong>RGB only</strong> (not CMYK)<br>
+    • No borders, text, or logos unless part of the artwork
+  </div>
 
-      if (!song || !cover || !artist || !email) {
-        status.textContent = "Please fill all fields.";
-        return;
-      }
+  <button onclick="submitForm()">Submit Release</button>
 
-      const [songData, coverData] = await Promise.all([
-        toBase64(song),
-        toBase64(cover)
-      ]);
+  <div id="status"></div>
 
-      const payload = {
-        artist, email,
-        fileName: song.name,
-        fileType: song.type,
-        fileData: songData.split(',')[1],
+  <div class="footer">
+    Need help? Contact us at <a href="mailto:sillysongrecords@gmail.com">sillysongrecords@gmail.com</a>
+  </div>
+</div>
+
+<script>
+  const COVER_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx1QSuvp5j8ktMQjvxUo-c5o5ftWsiUn0iJtXjaL97qKWdHpFziNFDC1x1Tw6ef7A3nEw/exec';
+  const AUDIO_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyAw4snvNb9sMfhNCXMQRNMZ-gPD2HHVRMMCzFWVX4p3j3SacBsjzD25CpvmDfs4mL6BQ/exec';
+
+  async function submitForm() {
+    const artist = document.getElementById('artist').value.trim();
+    const title = document.getElementById('title').value.trim();
+    const genre = document.getElementById('genre').value;
+    const email = document.getElementById('email').value.trim();
+    const song = document.getElementById('songFile').files[0];
+    const cover = document.getElementById('coverFile').files[0];
+    const status = document.getElementById('status');
+    status.style.color = "black";
+
+    if (!artist || !title || !email || !song || !cover) {
+      status.textContent = "Please fill in all fields.";
+      status.style.color = "red";
+      return;
+    }
+
+    if (!['image/jpeg', 'image/png'].includes(cover.type)) {
+      status.textContent = "Cover art must be JPG or PNG.";
+      status.style.color = "red";
+      return;
+    }
+
+    const imageValid = await validateImageDimensions(cover);
+    if (!imageValid) {
+      status.textContent = "Cover art must be exactly 3000x3000 pixels.";
+      status.style.color = "red";
+      return;
+    }
+
+    try {
+      const coverPayload = {
+        title,
         coverName: cover.name,
         coverType: cover.type,
-        coverData: coverData.split(',')[1]
+        coverData: (await toBase64(cover)).split(',')[1]
       };
-
-      const res = await fetch('YOUR_WEB_APP_URL', {
+      const coverRes = await fetch(COVER_SCRIPT_URL, {
         method: 'POST',
-        body: JSON.stringify(payload),
+        body: JSON.stringify(coverPayload),
         headers: { 'Content-Type': 'application/json' }
       });
+      const coverText = await coverRes.text();
+      if (!coverText.includes("Success")) throw new Error("Cover art upload failed: " + coverText);
 
-      status.textContent = await res.text();
-    }
-
-    function toBase64(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
+      const audioPayload = {
+        title,
+        fileName: song.name,
+        fileType: song.type,
+        fileData: (await toBase64(song)).split(',')[1]
+      };
+      const audioRes = await fetch(AUDIO_SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify(audioPayload),
+        headers: { 'Content-Type': 'application/json' }
       });
+      const audioText = await audioRes.text();
+      if (!audioText.includes("Success")) throw new Error("Audio upload failed: " + audioText);
+
+      status.textContent = "✅ Release submitted successfully!";
+      status.style.color = "green";
+
+    } catch (err) {
+      status.textContent = "❌ " + err.message;
+      status.style.color = "red";
     }
-  </script>
+  }
+
+  function toBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function validateImageDimensions(file) {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        resolve(img.width === 3000 && img.height === 3000);
+      };
+      img.onerror = () => resolve(false);
+      img.src = URL.createObjectURL(file);
+    });
+  }
+</script>
+
 </body>
 </html>

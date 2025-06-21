@@ -163,6 +163,30 @@
     • No borders, text, or logos unless part of the artwork
   </div>
 
+  <label style="margin-top: 30px;">Select Stores for Delivery</label>
+  <div class="guidelines">
+    <label><input type="checkbox" id="selectAllStores" onclick="toggleAllStores(this)"> <strong>Deliver to all stores (350+)</strong></label>
+    <hr style="margin: 10px 0; border: 0; border-top: 1px solid #ccc;">
+    <label><input type="checkbox" class="store-checkbox" value="Spotify"> Spotify</label><br>
+    <label><input type="checkbox" class="store-checkbox" value="Apple Music"> Apple Music</label><br>
+    <label><input type="checkbox" class="store-checkbox" value="YouTube Music"> YouTube Music</label><br>
+    <label><input type="checkbox" class="store-checkbox" value="Amazon Music"> Amazon Music</label><br>
+    <label><input type="checkbox" class="store-checkbox" value="Deezer"> Deezer</label><br>
+    <label><input type="checkbox" class="store-checkbox" value="Pandora"> Pandora</label><br>
+    <label><input type="checkbox" class="store-checkbox" value="TIDAL"> TIDAL</label><br>
+    <label><input type="checkbox" class="store-checkbox" value="Tencent"> Tencent Music</label><br>
+
+    <br><strong>Other Monetization (check only if fully eligible):</strong><br>
+    <label><input type="checkbox" class="store-checkbox" value="YouTube Content ID"> YouTube Content ID</label><br>
+    <label><input type="checkbox" class="store-checkbox" value="Instagram/Facebook"> Instagram / Facebook Music</label><br>
+    <label><input type="checkbox" class="store-checkbox" value="TikTok"> TikTok Rights Management</label><br>
+    <label><input type="checkbox" class="store-checkbox" value="Audible Magic"> Audible Magic</label><br>
+
+    <p style="font-size: 12px; color: #666; margin-top: 10px;">
+      <strong>Note:</strong> Only select monetization options if you own 100% of the rights and the content contains no loops, samples, or copyrighted material.
+    </p>
+  </div>
+
   <button onclick="submitForm()">Submit Release</button>
 
   <div id="status"></div>
@@ -261,6 +285,11 @@
       img.onerror = () => resolve(false);
       img.src = URL.createObjectURL(file);
     });
+  }
+
+  function toggleAllStores(masterCheckbox) {
+    const all = document.querySelectorAll('.store-checkbox');
+    all.forEach(cb => cb.checked = masterCheckbox.checked);
   }
 </script>
 

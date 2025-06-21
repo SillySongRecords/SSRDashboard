@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Music Submission</title>
+  <style>
+    body { font-family: sans-serif; margin: 40px; }
+    input, button { margin-top: 10px; display: block; }
+  </style>
+</head>
+<body>
+  <h1>Submit Your Track</h1>
+  <input type="text" id="artist" placeholder="Artist Name" required>
+  <input type="email" id="email" placeholder="Email" required>
+  <input type="file" id="songFile" accept="audio/*" required>
+  <input type="file" id="coverFile" accept="image/*" required>
+  <button onclick="submitForm()">Submit</button>
+
+  <p id="status"></p>
+
+  <script>
+    async function submitForm() {
+      const artist = document.getElementById('artist').value;
+      const email = document.getElementById('email').value;
+      const song = document.getElementById('songFile').files[0];
+      const cover = document.getElementById('coverFile').files[0];
+      const status = document.getElementById('status');
+
+      if (!song || !cover || !artist || !email) {
+        status.textContent = "Please fill all fields.";
+        return;
+      }
+
+      const [songData, coverData] = await Promise.all([
+        toBase64(song),
+        toBase64(cover)
+      ]);
+
+      const payload = {
+        artist, email,
+        fileName: song.name,
+        fileType: song.type,
+        fileData: songData.split(',')[1],
+        coverName: cover.name,
+        coverType: cover.type,
+        coverData: coverData.split(',')[1]
+      };
+
+      const res = await fetch('YOUR_WEB_APP_URL', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      status.textContent = await res.text();
+    }
+
+    function toBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+  </script>
+</body>
+</html>
